@@ -133,4 +133,66 @@ VALUES
 -- Electric vehicle policy
 ('POL-432109-J', 'Tesla Insurance', 10, '2023-06-01', '2024-05-31', 950.00, 'FULL', 
 500.00, 300000.00, 150000.00, 150000.00, 
-'ACTIVE', 'Special EV coverage including battery protection'); 
+'ACTIVE', 'Special EV coverage including battery protection'),
+
+-- Additional active policies
+('POL-112233-K', 'Nationwide', 1, '2023-07-15', '2024-07-14', 1150.50, 'FULL', 
+250.00, 200000.00, 40000.00, 40000.00, 
+'ACTIVE', 'Secondary policy for shared vehicle'),
+
+('POL-445566-L', 'American Family', 3, '2023-08-01', '2024-08-01', 1375.25, 'COLLISION', 
+500.00, 300000.00, NULL, 75000.00, 
+'ACTIVE', 'Collision-focused policy for high-risk driver'),
+
+('POL-778899-M', 'Hartford', 5, '2023-06-10', '2024-06-09', 1050.75, 'COMPREHENSIVE', 
+300.00, 200000.00, 80000.00, NULL, 
+'ACTIVE', 'Comprehensive coverage for weather-related incidents'),
+
+('POL-223344-N', 'Travelers', 7, '2023-07-20', '2024-07-19', 1250.00, 'FULL', 
+750.00, 350000.00, 75000.00, 75000.00, 
+'ACTIVE', 'Replacement policy after expiration'),
+
+-- Policies expiring very soon (within 30 days)
+('POL-556677-O', 'Esurance', 2, '2022-08-15', '2023-08-14', 975.50, 'FULL', 
+500.00, 250000.00, 50000.00, 50000.00, 
+'ACTIVE', 'Expiring soon, renewal offer sent with 10% discount'),
+
+('POL-889900-P', 'Amica', 4, '2022-08-20', '2023-08-19', 1425.25, 'FULL', 
+250.00, 400000.00, 80000.00, 80000.00, 
+'ACTIVE', 'Premier policy expiring soon, renewal pending'),
+
+-- Recently expired policies
+('POL-334455-Q', 'Mercury', 6, '2022-07-01', '2023-07-01', 1300.00, 'FULL', 
+500.00, 200000.00, 40000.00, 40000.00, 
+'EXPIRED', 'Recently expired, grace period applied'),
+
+('POL-667788-R', 'Safeco', 8, '2022-07-15', '2023-07-15', 1575.50, 'FULL', 
+1000.00, 500000.00, 100000.00, 100000.00, 
+'EXPIRED', 'Premium policy recently expired, customer contacted'),
+
+-- Special coverage types
+('POL-990011-S', 'Root Insurance', 9, '2023-06-15', '2024-06-14', 825.75, 'LIABILITY', 
+500.00, 150000.00, NULL, NULL, 
+'ACTIVE', 'Usage-based insurance with telematics discount'),
+
+('POL-112233-T', 'PEMCO', 10, '2023-05-01', '2024-04-30', 1050.25, 'COMPREHENSIVE', 
+250.00, 200000.00, 200000.00, NULL, 
+'ACTIVE', 'Enhanced coverage for high-value electric vehicle'),
+
+-- Historical policies
+('POL-445566-U', 'Metlife', 1, '2021-01-15', '2022-01-14', 1100.00, 'FULL', 
+500.00, 200000.00, 40000.00, 40000.00, 
+'EXPIRED', 'Previous policy before current coverage'),
+
+('POL-778899-V', 'AAA Insurance', 3, '2021-05-20', '2022-05-19', 1450.50, 'FULL', 
+750.00, 350000.00, 70000.00, 70000.00, 
+'EXPIRED', 'Previous policy with higher premium'),
+
+-- Policies with unusual coverage amounts
+('POL-001122-W', 'Elephant Insurance', 5, '2023-04-01', '2024-03-31', 1100.00, 'FULL', 
+1500.00, 1000000.00, 250000.00, 250000.00, 
+'ACTIVE', 'High-limit policy with increased deductible'),
+
+('POL-334455-X', 'General Auto', 7, '2023-03-15', '2024-03-14', 675.25, 'LIABILITY', 
+2000.00, 50000.00, NULL, NULL, 
+'ACTIVE', 'Minimum coverage policy with high deductible'); 

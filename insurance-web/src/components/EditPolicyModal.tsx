@@ -48,20 +48,30 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     if (policy) {
       setSuccessMessage('');
       setError('');
       setErrors({});
+      setTouched({});
       fetchPolicyDetails(policy.id);
     } else {
       setFormData(null);
       setSuccessMessage('');
       setError('');
       setErrors({});
+      setTouched({});
     }
   }, [policy]);
+  
+  // Validate fields whenever formData or touched state changes
+  useEffect(() => {
+    if (formData && Object.keys(touched).length > 0) {
+      validateForm();
+    }
+  }, [formData, touched]);
 
   const fetchPolicyDetails = async (id: number) => {
     setIsLoading(true);
@@ -101,12 +111,70 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
     
     if (!formData) return false;
     
-    if (!formData.policyNumber) newErrors.policyNumber = 'Policy number is required';
-    if (!formData.provider) newErrors.provider = 'Provider is required';
-    if (!formData.startDate) newErrors.startDate = 'Start date is required';
-    if (!formData.endDate) newErrors.endDate = 'End date is required';
-    if (!formData.premiumAmount || formData.premiumAmount <= 0) {
-      newErrors.premiumAmount = 'Valid premium amount is required';
+    // Policy number validation with pattern
+    if (!formData.policyNumber) {
+      newErrors.policyNumber = 'Policy number is required';
+    } else if (!/^[A-Z0-9-]{5,15}$/i.test(formData.policyNumber)) {
+      newErrors.policyNumber = 'Policy number should be 5-15 characters (letters, numbers, hyphens)';
+    }
+    
+    // Provider validation
+    if (!formData.provider) {
+      newErrors.provider = 'Provider is required';
+    } else if (formData.provider.length < 2) {
+      newErrors.provider = 'Provider name is too short';
+    } else if (formData.provider.length > 50) {
+      newErrors.provider = 'Provider name is too long (max 50 characters)';
+    }
+    
+    // Premium amount validation
+    if (!formData.premiumAmount) {
+      newErrors.premiumAmount = 'Premium amount is required';
+    } else if (formData.premiumAmount <= 0) {
+      newErrors.premiumAmount = 'Premium amount must be greater than zero';
+    } else if (formData.premiumAmount > 1000000) {
+      newErrors.premiumAmount = 'Premium amount is too high';
+    }
+    
+    // Date validations
+    if (!formData.startDate) {
+      newErrors.startDate = 'Start date is required';
+    }
+    
+    if (!formData.endDate) {
+      newErrors.endDate = 'End date is required';
+    }
+    
+    // Verify end date is after start date
+    if (formData.startDate && formData.endDate) {
+      const start = new Date(formData.startDate);
+      const end = new Date(formData.endDate);
+      
+      if (end <= start) {
+        newErrors.endDate = 'End date must be after start date';
+      }
+    }
+    
+    // Other coverage validations
+    if (formData.deductibleAmount < 0) {
+      newErrors.deductibleAmount = 'Deductible amount cannot be negative';
+    }
+    
+    if (formData.liabilityCoverageAmount < 0) {
+      newErrors.liabilityCoverageAmount = 'Liability coverage amount cannot be negative';
+    }
+    
+    if (formData.comprehensiveCoverageAmount < 0) {
+      newErrors.comprehensiveCoverageAmount = 'Comprehensive coverage amount cannot be negative';
+    }
+    
+    if (formData.collisionCoverageAmount < 0) {
+      newErrors.collisionCoverageAmount = 'Collision coverage amount cannot be negative';
+    }
+    
+    // Notes validation (optional)
+    if (formData.notes && formData.notes.length > 500) {
+      newErrors.notes = 'Notes too long (max 500 characters)';
     }
     
     setErrors(newErrors);
@@ -117,12 +185,20 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
     if (!formData) return;
     
     const { name, value, type } = e.target;
-    const newValue = type === 'number' ? parseFloat(value) : value;
+    const newValue = type === 'number' ? parseFloat(value) || 0 : value;
     
     setFormData({
       ...formData,
       [name]: newValue
     });
+  };
+  
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name } = e.target;
+    setTouched(prev => ({
+      ...prev,
+      [name]: true
+    }));
   };
 
   const handleClose = () => {
@@ -130,13 +206,24 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
     setSuccessMessage('');
     setError('');
     setErrors({});
+    setTouched({});
     onClose();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData || !validateForm()) return;
+    if (!formData) return;
+    
+    // Mark all fields as touched for validation
+    const allTouched = Object.keys(formData).reduce((acc, key) => {
+      acc[key] = true;
+      return acc;
+    }, {} as Record<string, boolean>);
+    
+    setTouched(allTouched);
+    
+    if (!validateForm()) return;
     
     setIsSaving(true);
     setError('');
@@ -230,9 +317,10 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
                       name="policyNumber"
                       value={formData.policyNumber}
                       onChange={handleChange}
-                      className={`w-full p-2 border rounded-md ${errors.policyNumber ? 'border-red-500' : 'border-gray-300'}`}
+                      onBlur={handleBlur}
+                      className={`w-full p-2 border rounded-md ${touched.policyNumber && errors.policyNumber ? 'border-red-500' : 'border-gray-300'}`}
                     />
-                    {errors.policyNumber && <p className="text-red-500 text-xs mt-1">{errors.policyNumber}</p>}
+                    {touched.policyNumber && errors.policyNumber && <p className="text-red-500 text-xs mt-1">{errors.policyNumber}</p>}
                   </div>
                   
                   <div>
@@ -242,9 +330,10 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
                       name="provider"
                       value={formData.provider}
                       onChange={handleChange}
-                      className={`w-full p-2 border rounded-md ${errors.provider ? 'border-red-500' : 'border-gray-300'}`}
+                      onBlur={handleBlur}
+                      className={`w-full p-2 border rounded-md ${touched.provider && errors.provider ? 'border-red-500' : 'border-gray-300'}`}
                     />
-                    {errors.provider && <p className="text-red-500 text-xs mt-1">{errors.provider}</p>}
+                    {touched.provider && errors.provider && <p className="text-red-500 text-xs mt-1">{errors.provider}</p>}
                   </div>
                   
                   <div>
@@ -254,9 +343,10 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
                       name="startDate"
                       value={formData.startDate}
                       onChange={handleChange}
-                      className={`w-full p-2 border rounded-md ${errors.startDate ? 'border-red-500' : 'border-gray-300'}`}
+                      onBlur={handleBlur}
+                      className={`w-full p-2 border rounded-md ${touched.startDate && errors.startDate ? 'border-red-500' : 'border-gray-300'}`}
                     />
-                    {errors.startDate && <p className="text-red-500 text-xs mt-1">{errors.startDate}</p>}
+                    {touched.startDate && errors.startDate && <p className="text-red-500 text-xs mt-1">{errors.startDate}</p>}
                   </div>
                   
                   <div>
@@ -266,9 +356,10 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
                       name="endDate"
                       value={formData.endDate}
                       onChange={handleChange}
-                      className={`w-full p-2 border rounded-md ${errors.endDate ? 'border-red-500' : 'border-gray-300'}`}
+                      onBlur={handleBlur}
+                      className={`w-full p-2 border rounded-md ${touched.endDate && errors.endDate ? 'border-red-500' : 'border-gray-300'}`}
                     />
-                    {errors.endDate && <p className="text-red-500 text-xs mt-1">{errors.endDate}</p>}
+                    {touched.endDate && errors.endDate && <p className="text-red-500 text-xs mt-1">{errors.endDate}</p>}
                   </div>
                   
                   <div>
@@ -278,11 +369,12 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
                       name="premiumAmount"
                       value={formData.premiumAmount}
                       onChange={handleChange}
-                      className={`w-full p-2 border rounded-md ${errors.premiumAmount ? 'border-red-500' : 'border-gray-300'}`}
+                      onBlur={handleBlur}
+                      className={`w-full p-2 border rounded-md ${touched.premiumAmount && errors.premiumAmount ? 'border-red-500' : 'border-gray-300'}`}
                       step="0.01"
                       min="0"
                     />
-                    {errors.premiumAmount && <p className="text-red-500 text-xs mt-1">{errors.premiumAmount}</p>}
+                    {touched.premiumAmount && errors.premiumAmount && <p className="text-red-500 text-xs mt-1">{errors.premiumAmount}</p>}
                   </div>
                   
                   <div>
@@ -291,6 +383,7 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
                       name="coverageType"
                       value={formData.coverageType}
                       onChange={handleChange}
+                      onBlur={handleBlur}
                       className="w-full p-2 border border-gray-300 rounded-md"
                     >
                       <option value="FULL">Full Coverage</option>
@@ -313,7 +406,7 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
                       name="vehicleRegistration"
                       value={formData.vehicleRegistration}
                       onChange={handleChange}
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                      className="w-full p-2 border border-gray-300 rounded-md bg-gray-100"
                       readOnly
                     />
                     <p className="text-xs text-gray-500 mt-1">Cannot be changed here</p>
@@ -326,7 +419,7 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
                       name="vehicleMake"
                       value={formData.vehicleMake}
                       onChange={handleChange}
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                      className="w-full p-2 border border-gray-300 rounded-md bg-gray-100"
                       readOnly
                     />
                     <p className="text-xs text-gray-500 mt-1">Cannot be changed here</p>
@@ -339,7 +432,7 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
                       name="vehicleModel"
                       value={formData.vehicleModel}
                       onChange={handleChange}
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                      className="w-full p-2 border border-gray-300 rounded-md bg-gray-100"
                       readOnly
                     />
                     <p className="text-xs text-gray-500 mt-1">Cannot be changed here</p>
@@ -358,10 +451,12 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
                       name="deductibleAmount"
                       value={formData.deductibleAmount}
                       onChange={handleChange}
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                      onBlur={handleBlur}
+                      className={`w-full p-2 border rounded-md ${touched.deductibleAmount && errors.deductibleAmount ? 'border-red-500' : 'border-gray-300'}`}
                       step="0.01"
                       min="0"
                     />
+                    {touched.deductibleAmount && errors.deductibleAmount && <p className="text-red-500 text-xs mt-1">{errors.deductibleAmount}</p>}
                   </div>
                   
                   <div>
@@ -371,10 +466,12 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
                       name="liabilityCoverageAmount"
                       value={formData.liabilityCoverageAmount}
                       onChange={handleChange}
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                      onBlur={handleBlur}
+                      className={`w-full p-2 border rounded-md ${touched.liabilityCoverageAmount && errors.liabilityCoverageAmount ? 'border-red-500' : 'border-gray-300'}`}
                       step="0.01"
                       min="0"
                     />
+                    {touched.liabilityCoverageAmount && errors.liabilityCoverageAmount && <p className="text-red-500 text-xs mt-1">{errors.liabilityCoverageAmount}</p>}
                   </div>
                   
                   <div>
@@ -384,10 +481,12 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
                       name="comprehensiveCoverageAmount"
                       value={formData.comprehensiveCoverageAmount}
                       onChange={handleChange}
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                      onBlur={handleBlur}
+                      className={`w-full p-2 border rounded-md ${touched.comprehensiveCoverageAmount && errors.comprehensiveCoverageAmount ? 'border-red-500' : 'border-gray-300'}`}
                       step="0.01"
                       min="0"
                     />
+                    {touched.comprehensiveCoverageAmount && errors.comprehensiveCoverageAmount && <p className="text-red-500 text-xs mt-1">{errors.comprehensiveCoverageAmount}</p>}
                   </div>
                   
                   <div>
@@ -397,10 +496,12 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
                       name="collisionCoverageAmount"
                       value={formData.collisionCoverageAmount}
                       onChange={handleChange}
-                      className="w-full p-2 border border-gray-300 rounded-md"
+                      onBlur={handleBlur}
+                      className={`w-full p-2 border rounded-md ${touched.collisionCoverageAmount && errors.collisionCoverageAmount ? 'border-red-500' : 'border-gray-300'}`}
                       step="0.01"
                       min="0"
                     />
+                    {touched.collisionCoverageAmount && errors.collisionCoverageAmount && <p className="text-red-500 text-xs mt-1">{errors.collisionCoverageAmount}</p>}
                   </div>
                 </div>
               </div>
@@ -412,9 +513,12 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
                   name="notes"
                   value={formData.notes}
                   onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded-md h-24"
+                  onBlur={handleBlur}
+                  className={`w-full p-2 border rounded-md h-24 ${touched.notes && errors.notes ? 'border-red-500' : 'border-gray-300'}`}
                   placeholder="Additional notes or comments about this policy..."
                 ></textarea>
+                {touched.notes && errors.notes && <p className="text-red-500 text-xs mt-1">{errors.notes}</p>}
+                <p className="text-xs text-gray-500 mt-1">{formData.notes.length}/500 characters</p>
               </div>
             </div>
             
