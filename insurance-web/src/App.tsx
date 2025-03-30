@@ -8,6 +8,7 @@ import PolicyList from './components/PolicyList'
 import DeleteConfirmationModal from './components/DeleteConfirmationModal'
 import AddPolicyForm from './components/AddPolicyForm'
 import ViewPolicyModal from './components/ViewPolicyModal'
+import EditPolicyModal from './components/EditPolicyModal'
 
 // Import types
 import { Policy, ApiResponse, PolicyFormData } from './types'
@@ -27,6 +28,7 @@ function App() {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isAddFormOpen, setIsAddFormOpen] = useState(false);
   const [viewingPolicy, setViewingPolicy] = useState<Policy | null>(null);
+  const [editingPolicy, setEditingPolicy] = useState<Policy | null>(null);
   
   // Statistics state
   const [stats, setStats] = useState({
@@ -69,6 +71,22 @@ function App() {
   // Close view policy modal
   const closeViewPolicy = () => {
     setViewingPolicy(null);
+  };
+  
+  // Edit policy function
+  const editPolicy = (policy: Policy) => {
+    setEditingPolicy(policy);
+  };
+  
+  // Close edit policy modal
+  const closeEditPolicy = () => {
+    setEditingPolicy(null);
+  };
+  
+  // Handle successful policy update
+  const handlePolicyUpdated = () => {
+    fetchPolicies(currentPage);
+    fetchStatistics();
   };
   
   // Delete policy function
@@ -239,6 +257,7 @@ function App() {
           onPageChange={handlePageChange}
           onConfirmDelete={confirmDelete}
           onView={viewPolicy}
+          onEdit={editPolicy}
           onRetry={() => fetchPolicies(currentPage)}
           formatCurrency={formatCurrency}
         />
@@ -297,6 +316,14 @@ function App() {
       <ViewPolicyModal
         policy={viewingPolicy}
         onClose={closeViewPolicy}
+        formatCurrency={formatCurrency}
+      />
+      
+      {/* Edit Policy Modal */}
+      <EditPolicyModal
+        policy={editingPolicy}
+        onClose={closeEditPolicy}
+        onPolicyUpdated={handlePolicyUpdated}
         formatCurrency={formatCurrency}
       />
     </div>

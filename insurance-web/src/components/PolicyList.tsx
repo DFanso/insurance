@@ -12,6 +12,7 @@ interface PolicyListProps {
   onPageChange: (page: number) => void;
   onConfirmDelete: (policy: Policy) => void;
   onView: (policy: Policy) => void;
+  onEdit: (policy: Policy) => void;
   onRetry: () => void;
   formatCurrency: (amount: number) => string;
 }
@@ -27,6 +28,7 @@ const PolicyList: React.FC<PolicyListProps> = ({
   onPageChange,
   onConfirmDelete,
   onView,
+  onEdit,
   onRetry,
   formatCurrency
 }) => {
@@ -82,7 +84,12 @@ const PolicyList: React.FC<PolicyListProps> = ({
                       >
                         View
                       </button>
-                      <button className="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
+                      <button 
+                        onClick={() => onEdit(policy)} 
+                        className="text-blue-600 hover:text-blue-900 mr-3"
+                      >
+                        Edit
+                      </button>
                       <button 
                         onClick={() => onConfirmDelete(policy)} 
                         className="text-red-600 hover:text-red-900"
