@@ -38,7 +38,7 @@ function App() {
   });
   
   // Pagination settings
-  const pageSize = 3;
+  const pageSize = 10;
   
   // Fetch policies data
   const fetchPolicies = async (page = 0) => {
@@ -280,38 +280,14 @@ function App() {
           />
         </div>
         
-        {/* Quick Access */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          <div className="dashboard-card">
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">Vehicles</h3>
-            <p className="text-gray-600 mb-4">Manage your registered vehicles</p>
-            <button className="action-button w-full">
-              View Vehicles
-            </button>
-          </div>
-          
-          <div className="dashboard-card">
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">Reports</h3>
-            <p className="text-gray-600 mb-4">Generate insurance reports</p>
-            <button className="action-button w-full">
-              View Reports
-            </button>
-          </div>
-          
-          <div className="dashboard-card">
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">Settings</h3>
-            <p className="text-gray-600 mb-4">Configure your account settings</p>
-            <button className="action-button w-full">
-              Open Settings
-            </button>
-          </div>
-        </div>
+        
+        
       </main>
       
       {/* Footer */}
       <footer className="footer">
         <div className="max-w-7xl mx-auto px-4">
-          <p>&copy; 2024 Insurance Management System</p>
+          <p>&copy; 2025 Insurance Management System</p>
         </div>
       </footer>
       
