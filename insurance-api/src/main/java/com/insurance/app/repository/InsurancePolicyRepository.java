@@ -65,14 +65,12 @@ public interface InsurancePolicyRepository extends JpaRepository<InsurancePolicy
     /**
      * Custom query to find policies by vehicle details
      */
-    @Query("SELECT p FROM InsurancePolicy p JOIN p.vehicle v WHERE " +
-           "v.make LIKE %:make% OR " +
-           "v.model LIKE %:model% OR " +
-           "v.registrationNumber LIKE %:registrationNumber%")
+    @Query("SELECT DISTINCT p FROM InsurancePolicy p JOIN p.vehicle v WHERE " +
+           "LOWER(v.make) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+           "LOWER(v.model) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+           "LOWER(v.registrationNumber) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
     Page<InsurancePolicy> findByVehicleDetails(
-            @Param("make") String make,
-            @Param("model") String model,
-            @Param("registrationNumber") String registrationNumber,
+            @Param("searchTerm") String searchTerm,
             Pageable pageable);
     
     /**

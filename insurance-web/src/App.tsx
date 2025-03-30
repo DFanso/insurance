@@ -40,15 +40,36 @@ function App() {
   // Pagination settings
   const pageSize = 10;
   
+  // Add new state for search and sort
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('id');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+  
   // Fetch policies data
   const fetchPolicies = async (page = 0) => {
     setIsLoading(true);
     setError('');
     
     try {
-      const response = await axios.get<ApiResponse>(
-        `${API_BASE_URL}/api/insurance?pageNo=${page}&pageSize=${pageSize}&sortBy=id&sortDir=asc`
-      );
+      let url = `${API_BASE_URL}/api/insurance`;
+      const queryParams = new URLSearchParams();
+      
+      // Add pagination and sorting parameters
+      queryParams.append('pageNo', page.toString());
+      queryParams.append('pageSize', pageSize.toString());
+      queryParams.append('sortBy', sortBy);
+      queryParams.append('sortDir', sortDir);
+
+      // If there's a search term, use the search endpoint
+      if (searchTerm) {
+        url = `${API_BASE_URL}/api/insurance/search`;
+        queryParams.append('searchTerm', searchTerm);
+      }
+
+      // Append query parameters to URL
+      url += `?${queryParams.toString()}`;
+      
+      const response = await axios.get<ApiResponse>(url);
       
       setPolicies(response.data.policies);
       setCurrentPage(response.data.currentPage);
@@ -200,6 +221,20 @@ function App() {
     fetchPolicies(page - 1);
   };
   
+  // Handle search
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    setCurrentPage(0); // Reset to first page when searching
+    fetchPolicies(0); // Fetch first page with search term
+  };
+  
+  // Handle sort
+  const handleSort = (newSortBy: string, newSortDir: 'asc' | 'desc') => {
+    setSortBy(newSortBy);
+    setSortDir(newSortDir);
+    fetchPolicies(currentPage);
+  };
+  
   // Fetch data on component mount
   useEffect(() => {
     fetchPolicies();
@@ -272,6 +307,8 @@ function App() {
             onEdit={editPolicy}
             onRetry={() => fetchPolicies(currentPage)}
             formatCurrency={formatCurrency}
+            onSearch={handleSearch}
+            onSort={handleSort}
           />
         </div>
       </main>

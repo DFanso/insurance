@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Policy } from '../types';
 
 interface PolicyListProps {
@@ -15,6 +15,8 @@ interface PolicyListProps {
   onEdit: (policy: Policy) => void;
   onRetry: () => void;
   formatCurrency: (amount: number) => string;
+  onSearch: (searchTerm: string) => void;
+  onSort: (sortBy: string, sortDir: 'asc' | 'desc') => void;
 }
 
 const PolicyList: React.FC<PolicyListProps> = ({
@@ -30,12 +32,81 @@ const PolicyList: React.FC<PolicyListProps> = ({
   onView,
   onEdit,
   onRetry,
-  formatCurrency
+  formatCurrency,
+  onSearch,
+  onSort
 }) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortBy, setSortBy] = useState('id');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+
+  // Reset search when component unmounts or policies change
+  useEffect(() => {
+    return () => {
+      setSearchTerm('');
+    };
+  }, [policies]);
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      onSearch(searchTerm.trim());
+    }
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchTerm(value);
+    if (!value.trim()) {
+      // If search is cleared, reset to normal listing
+      onSearch('');
+    }
+  };
+
+  const handleSort = (field: string) => {
+    const newSortDir = field === sortBy && sortDir === 'asc' ? 'desc' : 'asc';
+    setSortBy(field);
+    setSortDir(newSortDir);
+    onSort(field, newSortDir);
+  };
+
+  const SortIcon = ({ field }: { field: string }) => (
+    <span className="ml-1 inline-block">
+      {field === sortBy ? (
+        sortDir === 'asc' ? '↑' : '↓'
+      ) : '↕'}
+    </span>
+  );
+
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden mb-8 max-w-7xl mx-auto">
-      <div className="p-6 bg-blue-600 text-white flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Insurance Policies</h2>
+      <div className="p-6 bg-blue-600 text-white">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-semibold">Insurance Policies</h2>
+          <form onSubmit={handleSearch} className="flex gap-2">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              placeholder="Search by vehicle make, model, or registration..."
+              className="px-4 py-2 rounded-md text-gray-800 w-96 bg-white shadow-sm border-0 focus:outline-none focus:ring-2 focus:ring-white/50"
+            />
+            <button
+              type="submit"
+              className={`px-6 py-2 rounded-md font-medium transition-colors ${
+                searchTerm.trim() 
+                  ? 'bg-white text-blue-600 hover:bg-blue-50 shadow-sm' 
+                  : 'bg-white/50 text-white cursor-not-allowed'
+              }`}
+              disabled={!searchTerm.trim()}
+            >
+              Search
+            </button>
+          </form>
+        </div>
+        <div className="text-sm text-blue-100">
+          Enter vehicle details to search policies (e.g., Toyota, Camry, ABC123)
+        </div>
       </div>
       
       {isLoading ? (
@@ -58,12 +129,44 @@ const PolicyList: React.FC<PolicyListProps> = ({
           <table className="w-full table-auto">
             <thead className="bg-blue-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">Policy Number</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">Provider</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">Vehicle</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">Premium</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">Expiry Date</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">Actions</th>
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider cursor-pointer hover:bg-blue-100"
+                  onClick={() => handleSort('policyNumber')}
+                >
+                  Policy Number
+                  <SortIcon field="policyNumber" />
+                </th>
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider cursor-pointer hover:bg-blue-100"
+                  onClick={() => handleSort('provider')}
+                >
+                  Provider
+                  <SortIcon field="provider" />
+                </th>
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider cursor-pointer hover:bg-blue-100"
+                  onClick={() => handleSort('vehicleMake')}
+                >
+                  Vehicle
+                  <SortIcon field="vehicleMake" />
+                </th>
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider cursor-pointer hover:bg-blue-100"
+                  onClick={() => handleSort('premiumAmount')}
+                >
+                  Premium
+                  <SortIcon field="premiumAmount" />
+                </th>
+                <th 
+                  className="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider cursor-pointer hover:bg-blue-100"
+                  onClick={() => handleSort('endDate')}
+                >
+                  Expiry Date
+                  <SortIcon field="endDate" />
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-blue-800 uppercase tracking-wider">
+                  Actions
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -129,7 +232,7 @@ const PolicyList: React.FC<PolicyListProps> = ({
               <button
                 onClick={() => onPageChange(Math.max(1, currentPage))}
                 disabled={currentPage === 0}
-                className={`px-3 py-1 rounded ${
+                className={`!shadow-none !transform-none px-3 py-1 rounded ${
                   currentPage === 0
                     ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                     : 'bg-blue-600 text-white hover:bg-blue-700'
@@ -142,7 +245,7 @@ const PolicyList: React.FC<PolicyListProps> = ({
                 <button
                   key={page}
                   onClick={() => onPageChange(page)}
-                  className={`px-3 py-1 rounded ${
+                  className={`!shadow-none !transform-none px-3 py-1 rounded ${
                     page === currentPage + 1
                       ? 'bg-blue-700 text-white'
                       : 'bg-blue-100 text-blue-600 hover:bg-blue-200'
@@ -155,7 +258,7 @@ const PolicyList: React.FC<PolicyListProps> = ({
               <button
                 onClick={() => onPageChange(currentPage + 2)}
                 disabled={currentPage + 1 >= totalPages}
-                className={`px-3 py-1 rounded ${
+                className={`!shadow-none !transform-none px-3 py-1 rounded ${
                   currentPage + 1 >= totalPages
                     ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                     : 'bg-blue-600 text-white hover:bg-blue-700'

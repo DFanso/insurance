@@ -184,7 +184,7 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
                 Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         
         Pageable pageable = PageRequest.of(pageNo, pageSize, sort);
-        Page<InsurancePolicy> policies = policyRepository.findByVehicleDetails(searchTerm, searchTerm, searchTerm, pageable);
+        Page<InsurancePolicy> policies = policyRepository.findByVehicleDetails(searchTerm, pageable);
         
         return policies.map(this::mapToDto);
     }
