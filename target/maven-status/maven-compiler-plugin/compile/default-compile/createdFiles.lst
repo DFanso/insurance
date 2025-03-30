@@ -1,5 +1,14 @@
-com\insurance\app\AppApplication.class
+com\insurance\app\dto\InsurancePolicyDto$InsurancePolicyDtoBuilder.class
+com\insurance\app\model\InsurancePolicy.class
 com\insurance\app\model\Vehicle.class
+com\insurance\app\repository\InsurancePolicyRepository.class
+com\insurance\app\controller\InsurancePolicyController.class
+com\insurance\app\service\impl\InsurancePolicyServiceImpl.class
+com\insurance\app\dto\InsurancePolicyDto.class
+com\insurance\app\AppApplication.class
 com\insurance\app\repository\VehicleRepository.class
 com\insurance\app\controller\HealthController.class
+com\insurance\app\util\Constants.class
+com\insurance\app\service\InsurancePolicyService.class
+com\insurance\app\model\InsurancePolicy$InsurancePolicyBuilder.class
 com\insurance\app\model\Vehicle$VehicleBuilder.class

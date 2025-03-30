@@ -1,4 +1,5 @@
 -- Drop table if exists
+DROP TABLE IF EXISTS insurance_policies;
 DROP TABLE IF EXISTS vehicles;
 
 -- Create vehicles table with owner information
@@ -20,6 +21,27 @@ CREATE TABLE IF NOT EXISTS vehicles (
     insurance_policy_number VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Create insurance policies table
+CREATE TABLE IF NOT EXISTS insurance_policies (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    policy_number VARCHAR(50) NOT NULL UNIQUE,
+    provider VARCHAR(100) NOT NULL,
+    vehicle_id INT NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    premium_amount DECIMAL(10, 2) NOT NULL,
+    coverage_type VARCHAR(50) NOT NULL,
+    deductible_amount DECIMAL(10, 2),
+    liability_coverage_amount DECIMAL(12, 2),
+    comprehensive_coverage_amount DECIMAL(12, 2),
+    collision_coverage_amount DECIMAL(12, 2),
+    status VARCHAR(20) NOT NULL,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (vehicle_id) REFERENCES vehicles(id)
 );
 
 -- Seed data for vehicles with owner information
@@ -60,4 +82,55 @@ VALUES
 
 -- Hybrid/Electric
 ('Tesla', 'Model 3', 2022, '5YJ3E1EA4MF123789', 'YZA-7890', 'Red', 
-'Elizabeth', 'Jackson', 'liz.j@example.com', '555-901-2345', '864 Aspen Ct, Somewhere, ST 13579', 'DL78901234', '1992-05-11'); 
+'Elizabeth', 'Jackson', 'liz.j@example.com', '555-901-2345', '864 Aspen Ct, Somewhere, ST 13579', 'DL78901234', '1992-05-11');
+
+-- Seed data for insurance policies
+INSERT INTO insurance_policies 
+(policy_number, provider, vehicle_id, start_date, end_date, premium_amount, coverage_type, 
+deductible_amount, liability_coverage_amount, comprehensive_coverage_amount, collision_coverage_amount, 
+status, notes)
+VALUES
+-- Active policies
+('POL-123456-A', 'Safe Auto Insurance', 1, '2023-01-01', '2023-12-31', 1250.00, 'FULL', 
+500.00, 250000.00, 50000.00, 50000.00, 
+'ACTIVE', 'Annual policy with roadside assistance'),
+
+('POL-789012-B', 'Geico', 2, '2023-03-15', '2024-03-14', 980.50, 'FULL', 
+1000.00, 300000.00, 75000.00, 75000.00, 
+'ACTIVE', 'Multi-car discount applied'),
+
+('POL-345678-C', 'State Farm', 3, '2023-05-20', '2024-05-19', 1500.75, 'FULL', 
+750.00, 500000.00, 100000.00, 100000.00, 
+'ACTIVE', 'Premium coverage for sports car'),
+
+('POL-901234-D', 'Allstate', 4, '2023-07-10', '2024-07-09', 1350.25, 'FULL', 
+500.00, 300000.00, 60000.00, 60000.00, 
+'ACTIVE', 'Bundled with home insurance discount'),
+
+('POL-567890-E', 'Progressive', 5, '2023-02-28', '2024-02-27', 1175.00, 'FULL', 
+500.00, 250000.00, 50000.00, 50000.00, 
+'ACTIVE', 'Safe driver discount applied'),
+
+-- Expiring soon
+('POL-987654-F', 'Liberty Mutual', 6, '2023-01-15', '2023-08-15', 1400.50, 'FULL', 
+500.00, 300000.00, 70000.00, 70000.00, 
+'ACTIVE', 'Truck coverage with commercial use rider'),
+
+-- Expired policies
+('POL-654321-G', 'Farmers Insurance', 7, '2022-05-10', '2023-05-09', 1100.00, 'FULL', 
+750.00, 250000.00, 50000.00, 50000.00, 
+'EXPIRED', 'Policy expired, renewal notice sent'),
+
+('POL-210987-H', 'USAA', 8, '2022-06-20', '2023-06-19', 1625.75, 'FULL', 
+500.00, 500000.00, 100000.00, 100000.00, 
+'EXPIRED', 'Luxury vehicle premium policy'),
+
+-- Minimal coverage policy
+('POL-876543-I', 'The General', 9, '2023-04-15', '2024-04-14', 750.25, 'LIABILITY', 
+1000.00, 100000.00, NULL, NULL, 
+'ACTIVE', 'Liability only coverage'),
+
+-- Electric vehicle policy
+('POL-432109-J', 'Tesla Insurance', 10, '2023-06-01', '2024-05-31', 950.00, 'FULL', 
+500.00, 300000.00, 150000.00, 150000.00, 
+'ACTIVE', 'Special EV coverage including battery protection'); 

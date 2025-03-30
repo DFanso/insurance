@@ -1,0 +1,535 @@
+{
+	"info": {
+		"_postman_id": "19fbb205-26b2-410d-a5fe-9b297834f0a1",
+		"name": "insurance-api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17849869",
+		"_collection_link": "https://codex-api-testing.postman.co/workspace/Project~2f154a0f-22bf-484b-b84b-bebacc92e619/collection/17849869-19fbb205-26b2-410d-a5fe-9b297834f0a1?action=share&source=collection_link&creator=17849869"
+	},
+	"item": [
+		{
+			"name": "Health Check",
+			"item": [
+				{
+					"name": "Basic Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/health",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"health"
+							]
+						},
+						"description": "Basic health check endpoint to verify if the API is running"
+					},
+					"response": []
+				},
+				{
+					"name": "Detailed Health Check",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/health/details",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"health",
+								"details"
+							]
+						},
+						"description": "Detailed health check with memory usage and system information"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints to check the health status of the API"
+		},
+		{
+			"name": "Insurance Policies",
+			"item": [
+				{
+					"name": "Create Policy",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"policyNumber\": \"POL-TEST-001\",\n    \"provider\": \"Test Insurance Co\",\n    \"vehicleId\": 1,\n    \"startDate\": \"2023-08-01\",\n    \"endDate\": \"2024-08-01\",\n    \"premiumAmount\": 1200.50,\n    \"coverageType\": \"FULL\",\n    \"deductibleAmount\": 500.00,\n    \"liabilityCoverageAmount\": 300000.00,\n    \"comprehensiveCoverageAmount\": 50000.00,\n    \"collisionCoverageAmount\": 50000.00,\n    \"notes\": \"Test policy created via Postman\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/insurance",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"insurance"
+							]
+						},
+						"description": "Create a new insurance policy for a vehicle"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Policy by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/insurance/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"insurance",
+								"1"
+							]
+						},
+						"description": "Get a single insurance policy by its ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Policy by Policy Number",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/insurance/number/POL-123456-A",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"insurance",
+								"number",
+								"POL-123456-A"
+							]
+						},
+						"description": "Get a single insurance policy by its policy number"
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Policies",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/insurance?pageNo=0&pageSize=10&sortBy=id&sortDir=asc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"insurance"
+							],
+							"query": [
+								{
+									"key": "pageNo",
+									"value": "0"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "id"
+								},
+								{
+									"key": "sortDir",
+									"value": "asc"
+								}
+							]
+						},
+						"description": "Get all insurance policies with pagination and sorting"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Policies by Vehicle ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/insurance/vehicle/1?pageNo=0&pageSize=10&sortBy=id&sortDir=asc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"insurance",
+								"vehicle",
+								"1"
+							],
+							"query": [
+								{
+									"key": "pageNo",
+									"value": "0"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "id"
+								},
+								{
+									"key": "sortDir",
+									"value": "asc"
+								}
+							]
+						},
+						"description": "Get all insurance policies for a specific vehicle"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Policies by Provider",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/insurance/provider?provider=Geico&pageNo=0&pageSize=10&sortBy=id&sortDir=asc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"insurance",
+								"provider"
+							],
+							"query": [
+								{
+									"key": "provider",
+									"value": "Geico"
+								},
+								{
+									"key": "pageNo",
+									"value": "0"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "id"
+								},
+								{
+									"key": "sortDir",
+									"value": "asc"
+								}
+							]
+						},
+						"description": "Get all insurance policies from a specific provider"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Policies by Expiry Date Range",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/insurance/expiry-range?startDate=2023-06-01&endDate=2023-12-31&pageNo=0&pageSize=10&sortBy=endDate&sortDir=asc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"insurance",
+								"expiry-range"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2023-06-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2023-12-31"
+								},
+								{
+									"key": "pageNo",
+									"value": "0"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "endDate"
+								},
+								{
+									"key": "sortDir",
+									"value": "asc"
+								}
+							]
+						},
+						"description": "Get all policies with expiry dates in a specific range"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Active Policies",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/insurance/active?pageNo=0&pageSize=10&sortBy=id&sortDir=asc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"insurance",
+								"active"
+							],
+							"query": [
+								{
+									"key": "pageNo",
+									"value": "0"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "id"
+								},
+								{
+									"key": "sortDir",
+									"value": "asc"
+								}
+							]
+						},
+						"description": "Get all active insurance policies"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Expired Policies",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/insurance/expired?pageNo=0&pageSize=10&sortBy=id&sortDir=asc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"insurance",
+								"expired"
+							],
+							"query": [
+								{
+									"key": "pageNo",
+									"value": "0"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "id"
+								},
+								{
+									"key": "sortDir",
+									"value": "asc"
+								}
+							]
+						},
+						"description": "Get all expired insurance policies"
+					},
+					"response": []
+				},
+				{
+					"name": "Search Policies by Vehicle Details",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/insurance/search?searchTerm=Toyota&pageNo=0&pageSize=10&sortBy=id&sortDir=asc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"insurance",
+								"search"
+							],
+							"query": [
+								{
+									"key": "searchTerm",
+									"value": "Toyota"
+								},
+								{
+									"key": "pageNo",
+									"value": "0"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "id"
+								},
+								{
+									"key": "sortDir",
+									"value": "asc"
+								}
+							]
+						},
+						"description": "Search for policies by vehicle make, model, or registration"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Policies by Premium Range",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/insurance/premium-range?minAmount=1000&maxAmount=1500&pageNo=0&pageSize=10&sortBy=premiumAmount&sortDir=asc",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"insurance",
+								"premium-range"
+							],
+							"query": [
+								{
+									"key": "minAmount",
+									"value": "1000"
+								},
+								{
+									"key": "maxAmount",
+									"value": "1500"
+								},
+								{
+									"key": "pageNo",
+									"value": "0"
+								},
+								{
+									"key": "pageSize",
+									"value": "10"
+								},
+								{
+									"key": "sortBy",
+									"value": "premiumAmount"
+								},
+								{
+									"key": "sortDir",
+									"value": "asc"
+								}
+							]
+						},
+						"description": "Get policies within a specific premium amount range"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Policy",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"policyNumber\": \"POL-123456-A\",\n    \"provider\": \"Safe Auto Insurance\",\n    \"vehicleId\": 1,\n    \"startDate\": \"2023-01-01\",\n    \"endDate\": \"2024-01-01\",\n    \"premiumAmount\": 1300.00,\n    \"coverageType\": \"FULL\",\n    \"deductibleAmount\": 500.00,\n    \"liabilityCoverageAmount\": 300000.00,\n    \"comprehensiveCoverageAmount\": 60000.00,\n    \"collisionCoverageAmount\": 60000.00,\n    \"notes\": \"Updated policy with extended coverage\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/insurance/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"insurance",
+								"1"
+							]
+						},
+						"description": "Update an existing insurance policy"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Policy",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/insurance/7",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"insurance",
+								"7"
+							]
+						},
+						"description": "Delete an insurance policy (should be expired or invalid)"
+					},
+					"response": []
+				}
+			],
+			"description": "Endpoints for managing insurance policies"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}
