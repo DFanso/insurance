@@ -51,7 +51,15 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
 
   useEffect(() => {
     if (policy) {
+      setSuccessMessage('');
+      setError('');
+      setErrors({});
       fetchPolicyDetails(policy.id);
+    } else {
+      setFormData(null);
+      setSuccessMessage('');
+      setError('');
+      setErrors({});
     }
   }, [policy]);
 
@@ -117,6 +125,14 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
     });
   };
 
+  const handleClose = () => {
+    setFormData(null);
+    setSuccessMessage('');
+    setError('');
+    setErrors({});
+    onClose();
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -127,11 +143,10 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
     setSuccessMessage('');
     
     try {
-      // Create the API payload
       const payload = {
         policyNumber: formData.policyNumber,
         provider: formData.provider,
-        vehicleId: 1, // In a real app, you'd use a real vehicle ID
+        vehicleId: 1,
         startDate: formData.startDate,
         endDate: formData.endDate,
         premiumAmount: formData.premiumAmount,
@@ -143,14 +158,11 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
         notes: formData.notes
       };
       
-      // Make the API call to update the policy
       await axios.put(`http://localhost:8080/api/insurance/${formData.id}`, payload);
       
       setSuccessMessage('Policy updated successfully');
-      setTimeout(() => {
-        onPolicyUpdated();
-        onClose();
-      }, 1500);
+      onPolicyUpdated();
+      handleClose();
     } catch (err) {
       setError('Failed to update policy. Please try again.');
       console.error(err);
@@ -167,7 +179,7 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-semibold text-blue-800">Edit Policy</h2>
           <button
-            onClick={onClose}
+            onClick={handleClose}
             className="text-gray-500 hover:text-gray-700"
             disabled={isSaving}
           >
@@ -197,6 +209,12 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
             <div className="bg-green-100 text-green-700 p-4 rounded-lg mb-4">
               <p className="font-medium">{successMessage}</p>
             </div>
+            <button
+              onClick={handleClose}
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            >
+              Close
+            </button>
           </div>
         ) : formData && (
           <form onSubmit={handleSubmit}>
@@ -403,7 +421,7 @@ const EditPolicyModal: React.FC<EditPolicyModalProps> = ({
             <div className="mt-8 flex justify-end space-x-3">
               <button
                 type="button"
-                onClick={onClose}
+                onClick={handleClose}
                 className="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300 transition-colors"
                 disabled={isSaving}
               >
