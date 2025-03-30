@@ -3,7 +3,6 @@ import axios from 'axios'
 import './App.css'
 
 // Import components
-import Dashboard from './components/Dashboard'
 import PolicyList from './components/PolicyList'
 import DeleteConfirmationModal from './components/DeleteConfirmationModal'
 import AddPolicyForm from './components/AddPolicyForm'
@@ -222,68 +221,87 @@ function App() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen w-full bg-blue-50">
+    <div className="app-container">
       {/* Header */}
-      <header className="bg-blue-700 text-white shadow-md w-full">
-        <div className="max-w-full mx-auto px-4 py-4">
-          <h1 className="text-3xl font-bold text-center">Insurance Management System</h1>
+      <header className="header">
+        <div className="max-w-7xl mx-auto px-4">
+          <h1>Insurance Management System</h1>
         </div>
       </header>
       
       {/* Main content */}
-      <main className="flex-grow w-full px-4 py-8">
+      <main className="content-section">
         {/* Dashboard stats */}
-        <Dashboard stats={stats} />
+        <div className="stats-grid">
+          <div className="stat-card">
+            <div className="stat-value">{stats.total}</div>
+            <div className="stat-label">Total Policies</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-value">{stats.active}</div>
+            <div className="stat-label">Active Policies</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-value">{stats.expiringSoon}</div>
+            <div className="stat-label">Expiring Soon</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-value">{stats.expired}</div>
+            <div className="stat-label">Expired Policies</div>
+          </div>
+        </div>
         
         {/* Add Policy Button */}
-        <div className="max-w-7xl mx-auto mb-4 flex justify-end">
+        <div className="flex justify-end mb-6">
           <button 
             onClick={() => setIsAddFormOpen(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+            className="action-button"
           >
             Add New Policy
           </button>
         </div>
         
         {/* Policies Table */}
-        <PolicyList 
-          policies={policies}
-          isLoading={isLoading}
-          error={error}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          totalItems={totalItems}
-          pageSize={pageSize}
-          onPageChange={handlePageChange}
-          onConfirmDelete={confirmDelete}
-          onView={viewPolicy}
-          onEdit={editPolicy}
-          onRetry={() => fetchPolicies(currentPage)}
-          formatCurrency={formatCurrency}
-        />
+        <div className="table-container">
+          <PolicyList 
+            policies={policies}
+            isLoading={isLoading}
+            error={error}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            totalItems={totalItems}
+            pageSize={pageSize}
+            onPageChange={handlePageChange}
+            onConfirmDelete={confirmDelete}
+            onView={viewPolicy}
+            onEdit={editPolicy}
+            onRetry={() => fetchPolicies(currentPage)}
+            formatCurrency={formatCurrency}
+          />
+        </div>
         
         {/* Quick Access */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-blue-800 mb-3">Vehicles</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          <div className="dashboard-card">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">Vehicles</h3>
             <p className="text-gray-600 mb-4">Manage your registered vehicles</p>
-            <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+            <button className="action-button w-full">
               View Vehicles
             </button>
           </div>
           
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-blue-800 mb-3">Reports</h3>
+          <div className="dashboard-card">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">Reports</h3>
             <p className="text-gray-600 mb-4">Generate insurance reports</p>
-            <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+            <button className="action-button w-full">
               View Reports
             </button>
           </div>
           
-          <div className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-semibold text-blue-800 mb-3">Settings</h3>
+          <div className="dashboard-card">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">Settings</h3>
             <p className="text-gray-600 mb-4">Configure your account settings</p>
-            <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+            <button className="action-button w-full">
               Open Settings
             </button>
           </div>
@@ -291,13 +309,13 @@ function App() {
       </main>
       
       {/* Footer */}
-      <footer className="bg-blue-800 text-white py-6 w-full">
+      <footer className="footer">
         <div className="max-w-7xl mx-auto px-4">
-          <p className="text-center">&copy; 2023 Insurance Management System</p>
+          <p>&copy; 2024 Insurance Management System</p>
         </div>
       </footer>
       
-      {/* Delete Confirmation Modal */}
+      {/* Modals */}
       <DeleteConfirmationModal 
         policy={deletingPolicy}
         isDeleting={isDeleting}
@@ -305,21 +323,18 @@ function App() {
         onCancel={cancelDelete}
       />
       
-      {/* Add Policy Form */}
       <AddPolicyForm 
         isOpen={isAddFormOpen}
         onSubmit={addPolicy}
         onCancel={() => setIsAddFormOpen(false)}
       />
       
-      {/* View Policy Modal */}
       <ViewPolicyModal
         policy={viewingPolicy}
         onClose={closeViewPolicy}
         formatCurrency={formatCurrency}
       />
       
-      {/* Edit Policy Modal */}
       <EditPolicyModal
         policy={editingPolicy}
         onClose={closeEditPolicy}

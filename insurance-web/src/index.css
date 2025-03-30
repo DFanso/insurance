@@ -4,10 +4,9 @@
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #e70000;
+  color-scheme: light;
+  color: #2D3748;
+  background-color: #F7FAFC;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -17,11 +16,13 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #3182CE;
   text-decoration: inherit;
+  transition: color 0.2s ease;
 }
+
 a:hover {
-  color: #535bf2;
+  color: #2B6CB0;
 }
 
 body {
@@ -29,41 +30,73 @@ body {
   display: flex;
   width: 100%;
   min-height: 100vh;
+  background-color: #F7FAFC;
 }
 
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+  font-size: 2.5em;
+  line-height: 1.2;
+  color: #1A365D;
+  font-weight: 700;
 }
 
 button {
-  border-radius: 8px;
+  border-radius: 6px;
   border: 1px solid transparent;
   padding: 0.6em 1.2em;
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: #4299E1;
+  color: white;
   cursor: pointer;
-  transition: border-color 0.25s;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
 button:hover {
-  border-color: #646cff;
+  background-color: #3182CE;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
 button:focus,
 button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+  outline: 3px solid rgba(66, 153, 225, 0.5);
+  outline-offset: 2px;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
+    color: #2D3748;
+    background-color: #F7FAFC;
   }
   button {
-    background-color: #f9f9f9;
+    background-color: #4299E1;
+    color: white;
   }
+  button:hover {
+    background-color: #3182CE;
+  }
+}
+
+/* Add custom utility classes */
+.shadow-soft {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.gradient-bg {
+  background: linear-gradient(135deg, #4299E1 0%, #3182CE 100%);
+}
+
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.1);
 }
