@@ -7,5 +7,4 @@ import com.insurance.app.model.Vehicle;
 
 @Repository
 public interface VehicleRepository extends JpaRepository<Vehicle, Long> {
-    // Custom query methods can be added here
 } 

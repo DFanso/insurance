@@ -35,7 +35,7 @@ public class WebConfig implements WebMvcConfigurer {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
         
-        // Allow all origins for development (you should restrict this in production)
+        // Allow all origins for development 
         config.addAllowedOrigin("http://localhost:5173"); // Vite's default dev server port
         
         // Allow all HTTP methods

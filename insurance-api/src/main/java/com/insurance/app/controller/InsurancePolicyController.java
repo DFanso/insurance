@@ -42,8 +42,6 @@ public class InsurancePolicyController {
     
     /**
      * Create a new insurance policy
-     * @param policyDto the policy dto
-     * @return response entity with created policy
      */
     @PostMapping
     public ResponseEntity<InsurancePolicyDto> createPolicy(@RequestBody InsurancePolicyDto policyDto) {
@@ -53,8 +51,6 @@ public class InsurancePolicyController {
     
     /**
      * Get a policy by id
-     * @param id the policy id
-     * @return response entity with policy
      */
     @GetMapping("/{id}")
     public ResponseEntity<InsurancePolicyDto> getPolicyById(@PathVariable Long id) {
@@ -64,8 +60,6 @@ public class InsurancePolicyController {
     
     /**
      * Get a policy by policy number
-     * @param policyNumber the policy number
-     * @return response entity with policy
      */
     @GetMapping("/number/{policyNumber}")
     public ResponseEntity<InsurancePolicyDto> getPolicyByNumber(@PathVariable String policyNumber) {
@@ -75,11 +69,6 @@ public class InsurancePolicyController {
     
     /**
      * Get all policies with pagination
-     * @param pageNo the page number
-     * @param pageSize the page size
-     * @param sortBy the field to sort by
-     * @param sortDir the sort direction
-     * @return response entity with policies
      */
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllPolicies(
@@ -94,12 +83,6 @@ public class InsurancePolicyController {
     
     /**
      * Get policies by vehicle id with pagination
-     * @param vehicleId the vehicle id
-     * @param pageNo the page number
-     * @param pageSize the page size
-     * @param sortBy the field to sort by
-     * @param sortDir the sort direction
-     * @return response entity with policies
      */
     @GetMapping("/vehicle/{vehicleId}")
     public ResponseEntity<Map<String, Object>> getPoliciesByVehicleId(
@@ -115,12 +98,6 @@ public class InsurancePolicyController {
     
     /**
      * Get policies by provider with pagination
-     * @param provider the provider name
-     * @param pageNo the page number
-     * @param pageSize the page size
-     * @param sortBy the field to sort by
-     * @param sortDir the sort direction
-     * @return response entity with policies
      */
     @GetMapping("/provider")
     public ResponseEntity<Map<String, Object>> getPoliciesByProvider(
@@ -136,13 +113,6 @@ public class InsurancePolicyController {
     
     /**
      * Get policies by expiry date range with pagination
-     * @param startDate the start date
-     * @param endDate the end date
-     * @param pageNo the page number
-     * @param pageSize the page size
-     * @param sortBy the field to sort by
-     * @param sortDir the sort direction
-     * @return response entity with policies
      */
     @GetMapping("/expiry-range")
     public ResponseEntity<Map<String, Object>> getPoliciesByExpiryDateRange(
@@ -159,11 +129,6 @@ public class InsurancePolicyController {
     
     /**
      * Get active policies with pagination
-     * @param pageNo the page number
-     * @param pageSize the page size
-     * @param sortBy the field to sort by
-     * @param sortDir the sort direction
-     * @return response entity with policies
      */
     @GetMapping("/active")
     public ResponseEntity<Map<String, Object>> getActivePolicies(
@@ -178,11 +143,6 @@ public class InsurancePolicyController {
     
     /**
      * Get expired policies with pagination
-     * @param pageNo the page number
-     * @param pageSize the page size
-     * @param sortBy the field to sort by
-     * @param sortDir the sort direction
-     * @return response entity with policies
      */
     @GetMapping("/expired")
     public ResponseEntity<Map<String, Object>> getExpiredPolicies(
@@ -197,12 +157,6 @@ public class InsurancePolicyController {
     
     /**
      * Get policies by vehicle details with pagination
-     * @param searchTerm the search term
-     * @param pageNo the page number
-     * @param pageSize the page size
-     * @param sortBy the field to sort by
-     * @param sortDir the sort direction
-     * @return response entity with policies
      */
     @GetMapping("/search")
     public ResponseEntity<Map<String, Object>> getPoliciesByVehicleDetails(
@@ -218,13 +172,6 @@ public class InsurancePolicyController {
     
     /**
      * Get policies by premium amount range with pagination
-     * @param minAmount the minimum premium amount
-     * @param maxAmount the maximum premium amount
-     * @param pageNo the page number
-     * @param pageSize the page size
-     * @param sortBy the field to sort by
-     * @param sortDir the sort direction
-     * @return response entity with policies
      */
     @GetMapping("/premium-range")
     public ResponseEntity<Map<String, Object>> getPoliciesByPremiumRange(
@@ -241,9 +188,6 @@ public class InsurancePolicyController {
     
     /**
      * Update an existing policy
-     * @param id the policy id
-     * @param policyDto the updated policy dto
-     * @return response entity with updated policy
      */
     @PutMapping("/{id}")
     public ResponseEntity<InsurancePolicyDto> updatePolicy(
@@ -256,8 +200,6 @@ public class InsurancePolicyController {
     
     /**
      * Delete a policy by id
-     * @param id the policy id
-     * @return response entity with success message
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Map<String, String>> deletePolicy(@PathVariable Long id) {
@@ -270,8 +212,6 @@ public class InsurancePolicyController {
     
     /**
      * Create a paginated response from a page of policies
-     * @param page the page of policies
-     * @return map with page data
      */
     private ResponseEntity<Map<String, Object>> createPageResponse(Page<InsurancePolicyDto> page) {
         Map<String, Object> response = new HashMap<>();

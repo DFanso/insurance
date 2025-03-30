@@ -262,10 +262,6 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
         InsurancePolicy policy = policyRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(Constants.ERROR_POLICY_NOT_FOUND + id));
         
-        // Option: only allow deleting expired or cancelled policies
-        // if (policy.getStatus().equals(Constants.POLICY_STATUS_ACTIVE)) {
-        //     throw new RuntimeException("Cannot delete active policy");
-        // }
         
         policyRepository.delete(policy);
     }
