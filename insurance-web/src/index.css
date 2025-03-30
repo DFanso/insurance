@@ -47,14 +47,18 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #4299E1;
-  color: white;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+/* Default button style if no color specified */
+button:not([class*="bg-"]) {
+  background-color: #4299E1;
+  color: white;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-button:hover {
+button:not([class*="bg-"]):hover {
   background-color: #3182CE;
   transform: translateY(-1px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -71,11 +75,11 @@ button:focus-visible {
     color: #2D3748;
     background-color: #F7FAFC;
   }
-  button {
+  button:not([class*="bg-"]) {
     background-color: #4299E1;
     color: white;
   }
-  button:hover {
+  button:not([class*="bg-"]):hover {
     background-color: #3182CE;
   }
 }

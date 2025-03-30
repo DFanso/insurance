@@ -116,7 +116,7 @@ function App() {
       const policyData = {
         policyNumber: formData.policyNumber,
         provider: formData.provider,
-        vehicleId: 1, // In a real app, you'd get this from a vehicles list or create a new vehicle
+        vehicleId: 1,
         startDate: formData.startDate,
         endDate: formData.endDate,
         premiumAmount: formData.premiumAmount,
@@ -126,7 +126,6 @@ function App() {
         comprehensiveCoverageAmount: formData.comprehensiveCoverageAmount,
         collisionCoverageAmount: formData.collisionCoverageAmount,
         notes: formData.notes,
-        // Adding vehicle details directly for simplicity
         vehicle: {
           registration: formData.vehicleRegistration,
           make: formData.vehicleMake,
@@ -159,8 +158,6 @@ function App() {
   // Fetch statistics
   const fetchStatistics = async () => {
     try {
-      // This would typically be an API call to get statistics
-      // For now, we're calculating them from policy statuses
       const activeResponse = await axios.get<ApiResponse>(
         `${API_BASE_URL}/api/insurance/active?pageNo=0&pageSize=1&sortBy=id&sortDir=asc`
       );
@@ -169,12 +166,10 @@ function App() {
         `${API_BASE_URL}/api/insurance/expired?pageNo=0&pageSize=1&sortBy=id&sortDir=asc`
       );
       
-      // Get all policies for total count
       const allResponse = await axios.get<ApiResponse>(
         `${API_BASE_URL}/api/insurance?pageNo=0&pageSize=1&sortBy=id&sortDir=asc`
       );
       
-      // Calculate expiring soon (policies expiring in the next 30 days)
       const today = new Date();
       const thirtyDaysLater = new Date();
       thirtyDaysLater.setDate(today.getDate() + 30);
@@ -202,7 +197,7 @@ function App() {
   
   // Handle page change
   const handlePageChange = (page: number) => {
-    fetchPolicies(page - 1); // API uses 0-indexed pages, UI uses 1-indexed
+    fetchPolicies(page - 1);
   };
   
   // Fetch data on component mount
@@ -279,15 +274,12 @@ function App() {
             formatCurrency={formatCurrency}
           />
         </div>
-        
-        
-        
       </main>
       
       {/* Footer */}
       <footer className="footer">
         <div className="max-w-7xl mx-auto px-4">
-          <p>&copy; 2025 Insurance Management System</p>
+          <p>&copy; 2024 Insurance Management System</p>
         </div>
       </footer>
       
@@ -318,7 +310,7 @@ function App() {
         formatCurrency={formatCurrency}
       />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

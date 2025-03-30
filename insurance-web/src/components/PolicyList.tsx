@@ -77,22 +77,25 @@ const PolicyList: React.FC<PolicyListProps> = ({
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{formatCurrency(policy.premiumAmount)}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{policy.endDate}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
                       <button 
                         onClick={() => onView(policy)} 
-                        className="text-blue-600 hover:text-blue-900 mr-3"
+                        className="!shadow-none !transform-none bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2"
+                        style={{ transform: 'none' }}
                       >
                         View
                       </button>
                       <button 
                         onClick={() => onEdit(policy)} 
-                        className="text-blue-600 hover:text-blue-900 mr-3"
+                        className="!shadow-none !transform-none bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 mr-2"
+                        style={{ transform: 'none' }}
                       >
                         Edit
                       </button>
                       <button 
                         onClick={() => onConfirmDelete(policy)} 
-                        className="text-red-600 hover:text-red-900"
+                        className="!shadow-none !transform-none bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+                        style={{ transform: 'none' }}
                       >
                         Delete
                       </button>
