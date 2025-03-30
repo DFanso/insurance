@@ -316,7 +316,7 @@ function App() {
       {/* Footer */}
       <footer className="footer">
         <div className="max-w-7xl mx-auto px-4">
-          <p>&copy; 2024 Insurance Management System</p>
+          <p>&copy; 2025 Insurance Management System</p>
         </div>
       </footer>
       

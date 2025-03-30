@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PolicyFormData } from '../types';
 
 interface AddPolicyFormProps {
@@ -28,20 +28,105 @@ const AddPolicyForm: React.FC<AddPolicyFormProps> = ({ onSubmit, onCancel, isOpe
   const [formData, setFormData] = useState<PolicyFormData>(initialFormData);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    if (Object.keys(touched).length > 0) {
+      validateForm();
+    }
+  }, [formData, touched]);
 
   if (!isOpen) return null;
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
     
-    if (!formData.policyNumber) newErrors.policyNumber = 'Policy number is required';
-    if (!formData.provider) newErrors.provider = 'Provider is required';
-    if (!formData.vehicleRegistration) newErrors.vehicleRegistration = 'Vehicle registration is required';
-    if (!formData.vehicleMake) newErrors.vehicleMake = 'Vehicle make is required';
-    if (!formData.vehicleModel) newErrors.vehicleModel = 'Vehicle model is required';
-    if (!formData.premiumAmount || formData.premiumAmount <= 0) newErrors.premiumAmount = 'Valid premium amount is required';
-    if (!formData.startDate) newErrors.startDate = 'Start date is required';
-    if (!formData.endDate) newErrors.endDate = 'End date is required';
+    // Policy number validation with pattern
+    if (!formData.policyNumber) {
+      newErrors.policyNumber = 'Policy number is required';
+    } else if (!/^[A-Z0-9-]{5,15}$/i.test(formData.policyNumber)) {
+      newErrors.policyNumber = 'Policy number should be 5-15 characters (letters, numbers, hyphens)';
+    }
+    
+    // Provider validation
+    if (!formData.provider) {
+      newErrors.provider = 'Provider is required';
+    } else if (formData.provider.length < 2) {
+      newErrors.provider = 'Provider name is too short';
+    } else if (formData.provider.length > 50) {
+      newErrors.provider = 'Provider name is too long (max 50 characters)';
+    }
+    
+    // Vehicle registration validation
+    if (!formData.vehicleRegistration) {
+      newErrors.vehicleRegistration = 'Vehicle registration is required';
+    } else if (!/^[A-Z0-9]{2,10}$/i.test(formData.vehicleRegistration)) {
+      newErrors.vehicleRegistration = 'Invalid registration format (2-10 alphanumeric characters)';
+    }
+    
+    // Vehicle make validation
+    if (!formData.vehicleMake) {
+      newErrors.vehicleMake = 'Vehicle make is required';
+    } else if (formData.vehicleMake.length < 2) {
+      newErrors.vehicleMake = 'Vehicle make is too short';
+    }
+    
+    // Vehicle model validation
+    if (!formData.vehicleModel) {
+      newErrors.vehicleModel = 'Vehicle model is required';
+    } else if (formData.vehicleModel.length < 1) {
+      newErrors.vehicleModel = 'Vehicle model is too short';
+    }
+    
+    // Premium amount validation
+    if (!formData.premiumAmount) {
+      newErrors.premiumAmount = 'Premium amount is required';
+    } else if (formData.premiumAmount <= 0) {
+      newErrors.premiumAmount = 'Premium amount must be greater than zero';
+    } else if (formData.premiumAmount > 1000000) {
+      newErrors.premiumAmount = 'Premium amount is too high';
+    }
+    
+    // Date validations
+    if (!formData.startDate) {
+      newErrors.startDate = 'Start date is required';
+    }
+    
+    if (!formData.endDate) {
+      newErrors.endDate = 'End date is required';
+    }
+    
+    // Verify end date is after start date
+    if (formData.startDate && formData.endDate) {
+      const start = new Date(formData.startDate);
+      const end = new Date(formData.endDate);
+      
+      if (end <= start) {
+        newErrors.endDate = 'End date must be after start date';
+      }
+    }
+    
+    // Other coverage validations
+    if (formData.deductibleAmount < 0) {
+      newErrors.deductibleAmount = 'Deductible amount cannot be negative';
+    }
+    
+    if (formData.liabilityCoverageAmount < 0) {
+      newErrors.liabilityCoverageAmount = 'Liability coverage amount cannot be negative';
+    }
+    
+    if (formData.comprehensiveCoverageAmount < 0) {
+      newErrors.comprehensiveCoverageAmount = 'Comprehensive coverage amount cannot be negative';
+    }
+    
+    if (formData.collisionCoverageAmount < 0) {
+      newErrors.collisionCoverageAmount = 'Collision coverage amount cannot be negative';
+    }
+    
+    // Notes validation (optional)
+    if (formData.notes && formData.notes.length > 500) {
+      newErrors.notes = 'Notes too long (max 500 characters)';
+    }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -49,7 +134,7 @@ const AddPolicyForm: React.FC<AddPolicyFormProps> = ({ onSubmit, onCancel, isOpe
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
-    const newValue = type === 'number' ? parseFloat(value) : value;
+    const newValue = type === 'number' ? parseFloat(value) || 0 : value;
     
     setFormData(prev => ({
       ...prev,
@@ -57,8 +142,24 @@ const AddPolicyForm: React.FC<AddPolicyFormProps> = ({ onSubmit, onCancel, isOpe
     }));
   };
 
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name } = e.target;
+    setTouched(prev => ({
+      ...prev,
+      [name]: true
+    }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Mark all fields as touched for validation
+    const allTouched = Object.keys(formData).reduce((acc, key) => {
+      acc[key] = true;
+      return acc;
+    }, {} as Record<string, boolean>);
+    
+    setTouched(allTouched);
     
     if (!validateForm()) return;
     
@@ -67,6 +168,7 @@ const AddPolicyForm: React.FC<AddPolicyFormProps> = ({ onSubmit, onCancel, isOpe
     try {
       await onSubmit(formData);
       setFormData(initialFormData);
+      setTouched({});
     } catch (error) {
       console.error('Error submitting form:', error);
     } finally {
@@ -102,10 +204,11 @@ const AddPolicyForm: React.FC<AddPolicyFormProps> = ({ onSubmit, onCancel, isOpe
                     name="policyNumber"
                     value={formData.policyNumber}
                     onChange={handleChange}
-                    className={`w-full p-2 border rounded-md ${errors.policyNumber ? 'border-red-500' : 'border-gray-300'}`}
+                    onBlur={handleBlur}
+                    className={`w-full p-2 border rounded-md ${touched.policyNumber && errors.policyNumber ? 'border-red-500' : 'border-gray-300'}`}
                     placeholder="e.g., POL-123456"
                   />
-                  {errors.policyNumber && <p className="text-red-500 text-xs mt-1">{errors.policyNumber}</p>}
+                  {touched.policyNumber && errors.policyNumber && <p className="text-red-500 text-xs mt-1">{errors.policyNumber}</p>}
                 </div>
                 
                 <div>
@@ -115,10 +218,11 @@ const AddPolicyForm: React.FC<AddPolicyFormProps> = ({ onSubmit, onCancel, isOpe
                     name="provider"
                     value={formData.provider}
                     onChange={handleChange}
-                    className={`w-full p-2 border rounded-md ${errors.provider ? 'border-red-500' : 'border-gray-300'}`}
+                    onBlur={handleBlur}
+                    className={`w-full p-2 border rounded-md ${touched.provider && errors.provider ? 'border-red-500' : 'border-gray-300'}`}
                     placeholder="e.g., ABC Insurance"
                   />
-                  {errors.provider && <p className="text-red-500 text-xs mt-1">{errors.provider}</p>}
+                  {touched.provider && errors.provider && <p className="text-red-500 text-xs mt-1">{errors.provider}</p>}
                 </div>
                 
                 <div>
@@ -128,9 +232,10 @@ const AddPolicyForm: React.FC<AddPolicyFormProps> = ({ onSubmit, onCancel, isOpe
                     name="startDate"
                     value={formData.startDate}
                     onChange={handleChange}
-                    className={`w-full p-2 border rounded-md ${errors.startDate ? 'border-red-500' : 'border-gray-300'}`}
+                    onBlur={handleBlur}
+                    className={`w-full p-2 border rounded-md ${touched.startDate && errors.startDate ? 'border-red-500' : 'border-gray-300'}`}
                   />
-                  {errors.startDate && <p className="text-red-500 text-xs mt-1">{errors.startDate}</p>}
+                  {touched.startDate && errors.startDate && <p className="text-red-500 text-xs mt-1">{errors.startDate}</p>}
                 </div>
                 
                 <div>
@@ -140,9 +245,10 @@ const AddPolicyForm: React.FC<AddPolicyFormProps> = ({ onSubmit, onCancel, isOpe
                     name="endDate"
                     value={formData.endDate}
                     onChange={handleChange}
-                    className={`w-full p-2 border rounded-md ${errors.endDate ? 'border-red-500' : 'border-gray-300'}`}
+                    onBlur={handleBlur}
+                    className={`w-full p-2 border rounded-md ${touched.endDate && errors.endDate ? 'border-red-500' : 'border-gray-300'}`}
                   />
-                  {errors.endDate && <p className="text-red-500 text-xs mt-1">{errors.endDate}</p>}
+                  {touched.endDate && errors.endDate && <p className="text-red-500 text-xs mt-1">{errors.endDate}</p>}
                 </div>
                 
                 <div>
@@ -152,12 +258,13 @@ const AddPolicyForm: React.FC<AddPolicyFormProps> = ({ onSubmit, onCancel, isOpe
                     name="premiumAmount"
                     value={formData.premiumAmount}
                     onChange={handleChange}
-                    className={`w-full p-2 border rounded-md ${errors.premiumAmount ? 'border-red-500' : 'border-gray-300'}`}
+                    onBlur={handleBlur}
+                    className={`w-full p-2 border rounded-md ${touched.premiumAmount && errors.premiumAmount ? 'border-red-500' : 'border-gray-300'}`}
                     placeholder="0.00"
                     step="0.01"
                     min="0"
                   />
-                  {errors.premiumAmount && <p className="text-red-500 text-xs mt-1">{errors.premiumAmount}</p>}
+                  {touched.premiumAmount && errors.premiumAmount && <p className="text-red-500 text-xs mt-1">{errors.premiumAmount}</p>}
                 </div>
                 
                 <div>
@@ -166,6 +273,7 @@ const AddPolicyForm: React.FC<AddPolicyFormProps> = ({ onSubmit, onCancel, isOpe
                     name="coverageType"
                     value={formData.coverageType}
                     onChange={handleChange}
+                    onBlur={handleBlur}
                     className="w-full p-2 border border-gray-300 rounded-md"
                   >
                     <option value="FULL">Full Coverage</option>
@@ -188,10 +296,11 @@ const AddPolicyForm: React.FC<AddPolicyFormProps> = ({ onSubmit, onCancel, isOpe
                     name="vehicleRegistration"
                     value={formData.vehicleRegistration}
                     onChange={handleChange}
-                    className={`w-full p-2 border rounded-md ${errors.vehicleRegistration ? 'border-red-500' : 'border-gray-300'}`}
+                    onBlur={handleBlur}
+                    className={`w-full p-2 border rounded-md ${touched.vehicleRegistration && errors.vehicleRegistration ? 'border-red-500' : 'border-gray-300'}`}
                     placeholder="e.g., ABC123"
                   />
-                  {errors.vehicleRegistration && <p className="text-red-500 text-xs mt-1">{errors.vehicleRegistration}</p>}
+                  {touched.vehicleRegistration && errors.vehicleRegistration && <p className="text-red-500 text-xs mt-1">{errors.vehicleRegistration}</p>}
                 </div>
                 
                 <div>
@@ -201,10 +310,11 @@ const AddPolicyForm: React.FC<AddPolicyFormProps> = ({ onSubmit, onCancel, isOpe
                     name="vehicleMake"
                     value={formData.vehicleMake}
                     onChange={handleChange}
-                    className={`w-full p-2 border rounded-md ${errors.vehicleMake ? 'border-red-500' : 'border-gray-300'}`}
+                    onBlur={handleBlur}
+                    className={`w-full p-2 border rounded-md ${touched.vehicleMake && errors.vehicleMake ? 'border-red-500' : 'border-gray-300'}`}
                     placeholder="e.g., Toyota"
                   />
-                  {errors.vehicleMake && <p className="text-red-500 text-xs mt-1">{errors.vehicleMake}</p>}
+                  {touched.vehicleMake && errors.vehicleMake && <p className="text-red-500 text-xs mt-1">{errors.vehicleMake}</p>}
                 </div>
                 
                 <div>
@@ -214,10 +324,11 @@ const AddPolicyForm: React.FC<AddPolicyFormProps> = ({ onSubmit, onCancel, isOpe
                     name="vehicleModel"
                     value={formData.vehicleModel}
                     onChange={handleChange}
-                    className={`w-full p-2 border rounded-md ${errors.vehicleModel ? 'border-red-500' : 'border-gray-300'}`}
+                    onBlur={handleBlur}
+                    className={`w-full p-2 border rounded-md ${touched.vehicleModel && errors.vehicleModel ? 'border-red-500' : 'border-gray-300'}`}
                     placeholder="e.g., Camry"
                   />
-                  {errors.vehicleModel && <p className="text-red-500 text-xs mt-1">{errors.vehicleModel}</p>}
+                  {touched.vehicleModel && errors.vehicleModel && <p className="text-red-500 text-xs mt-1">{errors.vehicleModel}</p>}
                 </div>
               </div>
             </div>
@@ -233,11 +344,13 @@ const AddPolicyForm: React.FC<AddPolicyFormProps> = ({ onSubmit, onCancel, isOpe
                     name="deductibleAmount"
                     value={formData.deductibleAmount}
                     onChange={handleChange}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    onBlur={handleBlur}
+                    className={`w-full p-2 border rounded-md ${touched.deductibleAmount && errors.deductibleAmount ? 'border-red-500' : 'border-gray-300'}`}
                     placeholder="0.00"
                     step="0.01"
                     min="0"
                   />
+                  {touched.deductibleAmount && errors.deductibleAmount && <p className="text-red-500 text-xs mt-1">{errors.deductibleAmount}</p>}
                 </div>
                 
                 <div>
@@ -247,11 +360,13 @@ const AddPolicyForm: React.FC<AddPolicyFormProps> = ({ onSubmit, onCancel, isOpe
                     name="liabilityCoverageAmount"
                     value={formData.liabilityCoverageAmount}
                     onChange={handleChange}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    onBlur={handleBlur}
+                    className={`w-full p-2 border rounded-md ${touched.liabilityCoverageAmount && errors.liabilityCoverageAmount ? 'border-red-500' : 'border-gray-300'}`}
                     placeholder="0.00"
                     step="0.01"
                     min="0"
                   />
+                  {touched.liabilityCoverageAmount && errors.liabilityCoverageAmount && <p className="text-red-500 text-xs mt-1">{errors.liabilityCoverageAmount}</p>}
                 </div>
                 
                 <div>
@@ -261,11 +376,13 @@ const AddPolicyForm: React.FC<AddPolicyFormProps> = ({ onSubmit, onCancel, isOpe
                     name="comprehensiveCoverageAmount"
                     value={formData.comprehensiveCoverageAmount}
                     onChange={handleChange}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    onBlur={handleBlur}
+                    className={`w-full p-2 border rounded-md ${touched.comprehensiveCoverageAmount && errors.comprehensiveCoverageAmount ? 'border-red-500' : 'border-gray-300'}`}
                     placeholder="0.00"
                     step="0.01"
                     min="0"
                   />
+                  {touched.comprehensiveCoverageAmount && errors.comprehensiveCoverageAmount && <p className="text-red-500 text-xs mt-1">{errors.comprehensiveCoverageAmount}</p>}
                 </div>
                 
                 <div>
@@ -275,11 +392,13 @@ const AddPolicyForm: React.FC<AddPolicyFormProps> = ({ onSubmit, onCancel, isOpe
                     name="collisionCoverageAmount"
                     value={formData.collisionCoverageAmount}
                     onChange={handleChange}
-                    className="w-full p-2 border border-gray-300 rounded-md"
+                    onBlur={handleBlur}
+                    className={`w-full p-2 border rounded-md ${touched.collisionCoverageAmount && errors.collisionCoverageAmount ? 'border-red-500' : 'border-gray-300'}`}
                     placeholder="0.00"
                     step="0.01"
                     min="0"
                   />
+                  {touched.collisionCoverageAmount && errors.collisionCoverageAmount && <p className="text-red-500 text-xs mt-1">{errors.collisionCoverageAmount}</p>}
                 </div>
               </div>
             </div>
@@ -291,9 +410,12 @@ const AddPolicyForm: React.FC<AddPolicyFormProps> = ({ onSubmit, onCancel, isOpe
                 name="notes"
                 value={formData.notes}
                 onChange={handleChange}
-                className="w-full p-2 border border-gray-300 rounded-md h-24"
+                onBlur={handleBlur}
+                className={`w-full p-2 border rounded-md h-24 ${touched.notes && errors.notes ? 'border-red-500' : 'border-gray-300'}`}
                 placeholder="Additional notes or comments about this policy..."
               ></textarea>
+              {touched.notes && errors.notes && <p className="text-red-500 text-xs mt-1">{errors.notes}</p>}
+              <p className="text-xs text-gray-500 mt-1">{formData.notes.length}/500 characters</p>
             </div>
           </div>
           
