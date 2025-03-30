@@ -1,4 +1,5 @@
 com\insurance\app\AppApplication.class
 com\insurance\app\model\Vehicle.class
 com\insurance\app\repository\VehicleRepository.class
+com\insurance\app\controller\HealthController.class
 com\insurance\app\model\Vehicle$VehicleBuilder.class
