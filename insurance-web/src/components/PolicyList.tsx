@@ -11,6 +11,7 @@ interface PolicyListProps {
   pageSize: number;
   onPageChange: (page: number) => void;
   onConfirmDelete: (policy: Policy) => void;
+  onView: (policy: Policy) => void;
   onRetry: () => void;
   formatCurrency: (amount: number) => string;
 }
@@ -25,6 +26,7 @@ const PolicyList: React.FC<PolicyListProps> = ({
   pageSize,
   onPageChange,
   onConfirmDelete,
+  onView,
   onRetry,
   formatCurrency
 }) => {
@@ -74,7 +76,12 @@ const PolicyList: React.FC<PolicyListProps> = ({
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{formatCurrency(policy.premiumAmount)}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{policy.endDate}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button className="text-blue-600 hover:text-blue-900 mr-3">View</button>
+                      <button 
+                        onClick={() => onView(policy)} 
+                        className="text-blue-600 hover:text-blue-900 mr-3"
+                      >
+                        View
+                      </button>
                       <button className="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
                       <button 
                         onClick={() => onConfirmDelete(policy)} 
