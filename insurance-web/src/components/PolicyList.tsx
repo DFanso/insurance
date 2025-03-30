@@ -63,6 +63,11 @@ const PolicyList: React.FC<PolicyListProps> = ({
     }
   };
 
+  const handleClearSearch = () => {
+    setSearchTerm('');
+    onSearch('');
+  };
+
   const handleSort = (field: string) => {
     const newSortDir = field === sortBy && sortDir === 'asc' ? 'desc' : 'asc';
     setSortBy(field);
@@ -102,6 +107,15 @@ const PolicyList: React.FC<PolicyListProps> = ({
             >
               Search
             </button>
+            {searchTerm.trim() && (
+              <button
+                type="button"
+                onClick={handleClearSearch}
+                className="px-6 py-2 rounded-md font-medium bg-red-50 text-red-600 hover:bg-red-100 shadow-sm transition-colors"
+              >
+                Clear
+              </button>
+            )}
           </form>
         </div>
         <div className="text-sm text-blue-100">
