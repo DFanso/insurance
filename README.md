@@ -1,8 +1,5 @@
 # Insurance Application
 
-This project consists of two parts:
-- **insurance-api**: Spring Boot backend application
-- **insurance-web**: React frontend application
 
 ## Prerequisites
 
