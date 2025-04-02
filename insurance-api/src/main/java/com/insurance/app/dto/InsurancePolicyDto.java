@@ -35,4 +35,5 @@ public class InsurancePolicyDto {
     private BigDecimal collisionCoverageAmount;
     private String status;
     private String notes;
+    private String vehicleImage; // Base64 encoded image
 } 

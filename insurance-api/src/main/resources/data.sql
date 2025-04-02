@@ -39,6 +39,7 @@ CREATE TABLE IF NOT EXISTS insurance_policies (
     collision_coverage_amount DECIMAL(12, 2),
     status VARCHAR(20) NOT NULL,
     notes TEXT,
+    vehicle_image LONGTEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (vehicle_id) REFERENCES vehicles(id)
@@ -88,111 +89,114 @@ VALUES
 INSERT INTO insurance_policies 
 (policy_number, provider, vehicle_id, start_date, end_date, premium_amount, coverage_type, 
 deductible_amount, liability_coverage_amount, comprehensive_coverage_amount, collision_coverage_amount, 
-status, notes)
+status, notes, vehicle_image)
 VALUES
 -- Active policies
 ('POL-123456-A', 'Safe Auto Insurance', 1, '2023-01-01', '2023-12-31', 1250.00, 'FULL', 
 500.00, 250000.00, 50000.00, 50000.00, 
-'ACTIVE', 'Annual policy with roadside assistance'),
+'ACTIVE', 'Annual policy with roadside assistance',
+'data:image/jpeg;base64,/9j/4AAQSkZJRg...'), -- Replace with actual base64 image from https://unsplash.com/photos/p7tai9P7H-s
 
 ('POL-789012-B', 'Geico', 2, '2023-03-15', '2024-03-14', 980.50, 'FULL', 
 1000.00, 300000.00, 75000.00, 75000.00, 
-'ACTIVE', 'Multi-car discount applied'),
+'ACTIVE', 'Multi-car discount applied',
+'data:image/jpeg;base64,/9j/4AAQSkZJRg...'), -- Replace with actual base64 image from https://unsplash.com/photos/N9Pf2J656aQ
 
 ('POL-345678-C', 'State Farm', 3, '2023-05-20', '2024-05-19', 1500.75, 'FULL', 
 750.00, 500000.00, 100000.00, 100000.00, 
-'ACTIVE', 'Premium coverage for sports car'),
+'ACTIVE', 'Premium coverage for sports car',
+'data:image/jpeg;base64,/9j/4AAQSkZJRg...'), -- Replace with actual base64 image from https://unsplash.com/photos/YApiWyp0lqo
 
 ('POL-901234-D', 'Allstate', 4, '2023-07-10', '2024-07-09', 1350.25, 'FULL', 
 500.00, 300000.00, 60000.00, 60000.00, 
-'ACTIVE', 'Bundled with home insurance discount'),
+'ACTIVE', 'Bundled with home insurance discount', NULL),
 
 ('POL-567890-E', 'Progressive', 5, '2023-02-28', '2024-02-27', 1175.00, 'FULL', 
 500.00, 250000.00, 50000.00, 50000.00, 
-'ACTIVE', 'Safe driver discount applied'),
+'ACTIVE', 'Safe driver discount applied', NULL),
 
 -- Expiring soon
 ('POL-987654-F', 'Liberty Mutual', 6, '2023-01-15', '2023-08-15', 1400.50, 'FULL', 
 500.00, 300000.00, 70000.00, 70000.00, 
-'ACTIVE', 'Truck coverage with commercial use rider'),
+'ACTIVE', 'Truck coverage with commercial use rider', NULL),
 
 -- Expired policies
 ('POL-654321-G', 'Farmers Insurance', 7, '2022-05-10', '2023-05-09', 1100.00, 'FULL', 
 750.00, 250000.00, 50000.00, 50000.00, 
-'EXPIRED', 'Policy expired, renewal notice sent'),
+'EXPIRED', 'Policy expired, renewal notice sent', NULL),
 
 ('POL-210987-H', 'USAA', 8, '2022-06-20', '2023-06-19', 1625.75, 'FULL', 
 500.00, 500000.00, 100000.00, 100000.00, 
-'EXPIRED', 'Luxury vehicle premium policy'),
+'EXPIRED', 'Luxury vehicle premium policy', NULL),
 
 -- Minimal coverage policy
 ('POL-876543-I', 'The General', 9, '2023-04-15', '2024-04-14', 750.25, 'LIABILITY', 
 1000.00, 100000.00, NULL, NULL, 
-'ACTIVE', 'Liability only coverage'),
+'ACTIVE', 'Liability only coverage', NULL),
 
 -- Electric vehicle policy
 ('POL-432109-J', 'Tesla Insurance', 10, '2023-06-01', '2024-05-31', 950.00, 'FULL', 
 500.00, 300000.00, 150000.00, 150000.00, 
-'ACTIVE', 'Special EV coverage including battery protection'),
+'ACTIVE', 'Special EV coverage including battery protection', NULL),
 
 -- Additional active policies
 ('POL-112233-K', 'Nationwide', 1, '2023-07-15', '2024-07-14', 1150.50, 'FULL', 
 250.00, 200000.00, 40000.00, 40000.00, 
-'ACTIVE', 'Secondary policy for shared vehicle'),
+'ACTIVE', 'Secondary policy for shared vehicle', NULL),
 
 ('POL-445566-L', 'American Family', 3, '2023-08-01', '2024-08-01', 1375.25, 'COLLISION', 
 500.00, 300000.00, NULL, 75000.00, 
-'ACTIVE', 'Collision-focused policy for high-risk driver'),
+'ACTIVE', 'Collision-focused policy for high-risk driver', NULL),
 
 ('POL-778899-M', 'Hartford', 5, '2023-06-10', '2024-06-09', 1050.75, 'COMPREHENSIVE', 
 300.00, 200000.00, 80000.00, NULL, 
-'ACTIVE', 'Comprehensive coverage for weather-related incidents'),
+'ACTIVE', 'Comprehensive coverage for weather-related incidents', NULL),
 
 ('POL-223344-N', 'Travelers', 7, '2023-07-20', '2024-07-19', 1250.00, 'FULL', 
 750.00, 350000.00, 75000.00, 75000.00, 
-'ACTIVE', 'Replacement policy after expiration'),
+'ACTIVE', 'Replacement policy after expiration', NULL),
 
 -- Policies expiring very soon (within 30 days)
 ('POL-556677-O', 'Esurance', 2, '2022-08-15', '2023-08-14', 975.50, 'FULL', 
 500.00, 250000.00, 50000.00, 50000.00, 
-'ACTIVE', 'Expiring soon, renewal offer sent with 10% discount'),
+'ACTIVE', 'Expiring soon, renewal offer sent with 10% discount', NULL),
 
 ('POL-889900-P', 'Amica', 4, '2022-08-20', '2023-08-19', 1425.25, 'FULL', 
 250.00, 400000.00, 80000.00, 80000.00, 
-'ACTIVE', 'Premier policy expiring soon, renewal pending'),
+'ACTIVE', 'Premier policy expiring soon, renewal pending', NULL),
 
 -- Recently expired policies
 ('POL-334455-Q', 'Mercury', 6, '2022-07-01', '2023-07-01', 1300.00, 'FULL', 
 500.00, 200000.00, 40000.00, 40000.00, 
-'EXPIRED', 'Recently expired, grace period applied'),
+'EXPIRED', 'Recently expired, grace period applied', NULL),
 
 ('POL-667788-R', 'Safeco', 8, '2022-07-15', '2023-07-15', 1575.50, 'FULL', 
 1000.00, 500000.00, 100000.00, 100000.00, 
-'EXPIRED', 'Premium policy recently expired, customer contacted'),
+'EXPIRED', 'Premium policy recently expired, customer contacted', NULL),
 
 -- Special coverage types
 ('POL-990011-S', 'Root Insurance', 9, '2023-06-15', '2024-06-14', 825.75, 'LIABILITY', 
 500.00, 150000.00, NULL, NULL, 
-'ACTIVE', 'Usage-based insurance with telematics discount'),
+'ACTIVE', 'Usage-based insurance with telematics discount', NULL),
 
 ('POL-112233-T', 'PEMCO', 10, '2023-05-01', '2024-04-30', 1050.25, 'COMPREHENSIVE', 
 250.00, 200000.00, 200000.00, NULL, 
-'ACTIVE', 'Enhanced coverage for high-value electric vehicle'),
+'ACTIVE', 'Enhanced coverage for high-value electric vehicle', NULL),
 
 -- Historical policies
 ('POL-445566-U', 'Metlife', 1, '2021-01-15', '2022-01-14', 1100.00, 'FULL', 
 500.00, 200000.00, 40000.00, 40000.00, 
-'EXPIRED', 'Previous policy before current coverage'),
+'EXPIRED', 'Previous policy before current coverage', NULL),
 
 ('POL-778899-V', 'AAA Insurance', 3, '2021-05-20', '2022-05-19', 1450.50, 'FULL', 
 750.00, 350000.00, 70000.00, 70000.00, 
-'EXPIRED', 'Previous policy with higher premium'),
+'EXPIRED', 'Previous policy with higher premium', NULL),
 
 -- Policies with unusual coverage amounts
 ('POL-001122-W', 'Elephant Insurance', 5, '2023-04-01', '2024-03-31', 1100.00, 'FULL', 
 1500.00, 1000000.00, 250000.00, 250000.00, 
-'ACTIVE', 'High-limit policy with increased deductible'),
+'ACTIVE', 'High-limit policy with increased deductible', NULL),
 
 ('POL-334455-X', 'General Auto', 7, '2023-03-15', '2024-03-14', 675.25, 'LIABILITY', 
 2000.00, 50000.00, NULL, NULL, 
-'ACTIVE', 'Minimum coverage policy with high deductible'); 
+'ACTIVE', 'Minimum coverage policy with high deductible', NULL); 

@@ -288,6 +288,7 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
                 .collisionCoverageAmount(policy.getCollisionCoverageAmount())
                 .status(policy.getStatus())
                 .notes(policy.getNotes())
+                .vehicleImage(policy.getVehicleImage())
                 .build();
     }
     
@@ -307,7 +308,9 @@ public class InsurancePolicyServiceImpl implements InsurancePolicyService {
                 .liabilityCoverageAmount(dto.getLiabilityCoverageAmount())
                 .comprehensiveCoverageAmount(dto.getComprehensiveCoverageAmount())
                 .collisionCoverageAmount(dto.getCollisionCoverageAmount())
+                .status(dto.getStatus())
                 .notes(dto.getNotes())
+                .vehicleImage(dto.getVehicleImage())
                 .build();
     }
 } 

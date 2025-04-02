@@ -39,10 +39,13 @@ const ViewPolicyModal: React.FC<ViewPolicyModalProps> = ({
     
     try {
       const response = await axios.get<DetailedPolicy>(`http://localhost:8080/api/insurance/${id}`);
+      console.log('Policy details received:', response.data);
+      console.log('Received image length:', response.data.vehicleImage?.length || 0);
+      console.log('Image preview:', response.data.vehicleImage?.substring(0, 50) + '...');
       setDetailedPolicy(response.data);
     } catch (err) {
       setError('Failed to fetch policy details');
-      console.error(err);
+      console.error('Error fetching policy details:', err);
       // Fall back to the basic policy data
       setDetailedPolicy(policy as DetailedPolicy);
     } finally {
@@ -60,7 +63,7 @@ const ViewPolicyModal: React.FC<ViewPolicyModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-4xl max-h-[90vh] overflow-y-auto">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-semibold text-blue-800">Policy Details</h2>
           <button
@@ -122,6 +125,20 @@ const ViewPolicyModal: React.FC<ViewPolicyModalProps> = ({
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Vehicle Image */}
+            {displayPolicy.vehicleImage && (
+              <div className="col-span-2">
+                <h3 className="text-lg font-medium text-blue-700 mb-3">Vehicle Image</h3>
+                <div className="bg-blue-50 p-4 rounded-lg flex justify-center">
+                  <img
+                    src={displayPolicy.vehicleImage}
+                    alt="Vehicle"
+                    className="max-h-64 object-contain rounded-lg"
+                  />
+                </div>
+              </div>
+            )}
+            
             {/* Policy Information */}
             <div className="col-span-2">
               <h3 className="text-lg font-medium text-blue-700 mb-3">Policy Information</h3>

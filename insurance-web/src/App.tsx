@@ -147,12 +147,16 @@ function App() {
         comprehensiveCoverageAmount: formData.comprehensiveCoverageAmount,
         collisionCoverageAmount: formData.collisionCoverageAmount,
         notes: formData.notes,
+        vehicleImage: formData.vehicleImage,
         vehicle: {
           registration: formData.vehicleRegistration,
           make: formData.vehicleMake,
           model: formData.vehicleModel
         }
       };
+
+      console.log('Submitting policy with image length:', policyData.vehicleImage?.length || 0);
+      console.log('Image preview:', policyData.vehicleImage?.substring(0, 50) + '...');
       
       await axios.post(`${API_BASE_URL}/api/insurance`, policyData);
       
